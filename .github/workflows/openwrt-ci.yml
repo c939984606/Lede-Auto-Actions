@@ -106,12 +106,14 @@ jobs:
           #修改固件生成名字,增加当天日期(by:左右）
           sed -i 's/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)/IMG_PREFIX:=[$(shell date +%Y%m%d)]-$(VERSION_DIST_SANITIZED)/g' include/image.mk
           #增加首页温度显示
+          wget https://raw.githubusercontent.com/openwrtcompileshell/OpenwrtCompileScript/master/Warehouse/index_temperature/autocore
+          wget https://raw.githubusercontent.com/openwrtcompileshell/OpenwrtCompileScript/master/Warehouse/index_temperature/temperature
           temperature_if=$(grep -o "@TARGET_x86" package/lean/autocore/Makefile | wc -l)
           if [[ "$temperature_if" == "1" ]]; then
           rm -rf package/lean/autocore/files/autocore
           sed -i "s/@TARGET_x86/@(i386||x86_64||arm||mipsel||mips||aarch64)/g"  package/lean/autocore/Makefile
-          cp $HOME/$OW/$SF/$OCS/Warehouse/index_temperature/autocore  package/lean/autocore/files/autocore
-          cp $HOME/$OW/$SF/$OCS/Warehouse/index_temperature/temperature package/lean/autocore/files/sbin/temperature
+          cp ./autocore  package/lean/autocore/files/autocore
+          cp ./temperature package/lean/autocore/files/sbin/temperature
           else
           echo "temperature添加完成"
           fi
