@@ -91,6 +91,12 @@ jobs:
           mv $WORKINGDIR/luci-app-smartdns-${LUCIBRANCH}/* $WORKINGDIR/
           rmdir $WORKINGDIR/luci-app-smartdns-${LUCIBRANCH}
           rm $WORKINGDIR/${LUCIBRANCH}.zip
+    
+      - name: Update feeds
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          
       - name: 优化配置
         run: |
           #隐藏首页显示用户名
@@ -141,12 +147,8 @@ jobs:
           else
           grep "docker" -rl package/other/luci-app-dockerman/luasrc/* | xargs sed -i 's/docker/services/g'
           fi
-          COMMENT
-      
-      - name: Update feeds
-        run: |
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+          COMMENT          
+
       - name: Generate configuration file
         run: |
           rm -f ./.config*
