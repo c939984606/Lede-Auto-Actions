@@ -112,8 +112,8 @@ jobs:
           if [[ "$temperature_if" == "1" ]]; then
           rm -rf package/lean/autocore/files/autocore
           sed -i "s/@TARGET_x86/@(i386||x86_64||arm||mipsel||mips||aarch64)/g"  package/lean/autocore/Makefile
-          cp ./autocore  package/lean/autocore/files/autocore
-          cp ./temperature package/lean/autocore/files/sbin/temperature
+          cp ./autocore  package/lean/autocore/files/x86/autocore
+          cp ./temperature package/lean/autocore/files/x86/sbin/temperature
           else
           echo "temperature添加完成"
           fi
