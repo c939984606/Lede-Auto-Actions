@@ -108,15 +108,12 @@ jobs:
           #增加首页温度显示
           wget https://raw.githubusercontent.com/openwrtcompileshell/OpenwrtCompileScript/master/Warehouse/index_temperature/autocore
           wget https://raw.githubusercontent.com/openwrtcompileshell/OpenwrtCompileScript/master/Warehouse/index_temperature/temperature
-          temperature_if=$(grep -o "@TARGET_x86" package/lean/autocore/Makefile | wc -l)
-          if [[ "$temperature_if" == "1" ]]; then
           rm -rf package/lean/autocore/files/x86/autocore
           sed -i "s/@TARGET_x86/@(i386||x86_64||arm||mipsel||mips||aarch64)/g"  package/lean/autocore/Makefile
-          cp -rf ./autocore  package/lean/autocore/files/x86/autocore
-          cp -rf ./temperature package/lean/autocore/files/x86/sbin/temperature
-          else
+          cp -rf autocore  package/lean/autocore/files/x86/autocore
+          cp -rf temperature package/lean/autocore/files/x86/sbin/temperature
           echo "temperature添加完成"
-          fi
+          
           #首页显示编译时间
           Compile_time_if=$(grep -o "#首页显示编译时间" feeds/luci/modules/luci-base/po/zh-cn/base.po)
           if [[ "$Compile_time_if" == "#首页显示编译时间" ]]; then
