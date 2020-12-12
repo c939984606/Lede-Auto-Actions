@@ -114,20 +114,6 @@ jobs:
           cp -rf temperature package/lean/autocore/files/x86/sbin/temperature
           echo "temperature添加完成"
           
-          #首页显示编译时间
-          Compile_time_if=$(grep -o "#首页显示编译时间" feeds/luci/modules/luci-base/po/zh-cn/base.po)
-          if [[ "$Compile_time_if" == "#首页显示编译时间" ]]; then
-          echo "已添加首页显示编译时间"
-          else
-          sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
-          sed -i '$a #首页显示编译时间' feeds/luci/modules/luci-base/po/zh-cn/base.po
-          sed -i '$a msgid "Compile_time"' feeds/luci/modules/luci-base/po/zh-cn/base.po
-          sed -i '$a msgstr "固件编译时间"' feeds/luci/modules/luci-base/po/zh-cn/base.po
-          sed -i '$d' package/lean/default-settings/files/zzz-default-settings
-          sed -i '$d' package/lean/default-settings/files/zzz-default-settings
-          echo "echo \"`date "+%Y-%m-%d %H:%M"` (commit:`git log -1 --format=format:'%C(bold white)%h%C(reset)'`)\" >> /etc/Compile_time" >> package/lean/default-settings/files/zzz-default-settings
-          echo "exit 0" >> package/lean/default-settings/files/zzz-default-settings
-          fi
           #采用lisaac的luci-app-dockerman
           if [[ -e package/lean/luci-app-dockerman ]]; then
           rm -rf package/lean/luci-app-dockerman
