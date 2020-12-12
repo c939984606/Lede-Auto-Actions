@@ -105,14 +105,6 @@ jobs:
           sed -i "s/'luci_password'/'luci_username'/g" feeds/luci/modules/luci-base/luasrc/view/sysauth.htm
           #修改固件生成名字,增加当天日期(by:左右）
           sed -i 's/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)/IMG_PREFIX:=[$(shell date +%Y%m%d)]-$(VERSION_DIST_SANITIZED)/g' include/image.mk
-          #增加首页温度显示
-          wget https://raw.githubusercontent.com/openwrtcompileshell/OpenwrtCompileScript/master/Warehouse/index_temperature/autocore
-          wget https://raw.githubusercontent.com/openwrtcompileshell/OpenwrtCompileScript/master/Warehouse/index_temperature/temperature
-          rm -rf package/lean/autocore/files/x86/autocore
-          sed -i "s/@TARGET_x86/@(i386||x86_64||arm||mipsel||mips||aarch64)/g"  package/lean/autocore/Makefile
-          cp -rf autocore  package/lean/autocore/files/x86/autocore
-          cp -rf temperature package/lean/autocore/files/x86/sbin/temperature
-          echo "temperature添加完成"
           
           #采用lisaac的luci-app-dockerman
           if [[ -e package/lean/luci-app-dockerman ]]; then
@@ -176,6 +168,11 @@ jobs:
           cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+          rm -rf ./artifact/firmware/x86/64/*.vmdk
+          rm -rf ./artifact/firmware/x86/64/*.bin
+          rm -rf ./artifact/firmware/x86/64/*.vmdk
+          rm -rf ./artifact/firmware/x86/64/*rootfs.img
+          rm -rf ./artifact/firmware/x86/64/*.manifest
       - name: Deliver buildinfo
         uses: actions/upload-artifact@v2
         with:
