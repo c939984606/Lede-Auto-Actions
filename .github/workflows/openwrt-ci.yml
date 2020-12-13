@@ -91,6 +91,11 @@ jobs:
           mv $WORKINGDIR/luci-app-smartdns-${LUCIBRANCH}/* $WORKINGDIR/
           rmdir $WORKINGDIR/luci-app-smartdns-${LUCIBRANCH}
           rm $WORKINGDIR/${LUCIBRANCH}.zip
+          #采用lisaac的luci-app-dockerman
+          if [[ -e package/lean/luci-app-dockerman ]]; then
+          rm -rf package/lean/luci-app-dockerman
+          fi
+          git clone https://github.com/lisaac/luci-app-dockerman.git package/other/luci-app-dockerman
     
       - name: Update feeds
         run: |
