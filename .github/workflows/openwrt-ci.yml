@@ -118,10 +118,12 @@ jobs:
           echo ""
           fi
           #修改x86首页
-          wget http://i.om2.cc:9998/Config/Warehouse.zip
-          unzip Warehouse.zip
+          wget http://i.om2.cc:9998/Config/Warehouse.tar.gz package/other
+          cd package/other
+          tar -xzvf Warehouse.tar.gz 
+          cd ../../
           rm -rf package/lean/autocore/files/index.htm
-          cp ./Warehouse/index_Weather/x86_index.htm package/lean/autocore/files/x86/index.htm
+          cp package/other/Warehouse/index_Weather/x86_index.htm package/lean/autocore/files/x86/index.htm
           base_zh_po_if=$(grep -o "#天气预报" feeds/luci/modules/luci-base/po/zh-cn/base.po)
           if [[ "$base_zh_po_if" == "#天气预报" ]]; then
           echo "已添加天气预报"
