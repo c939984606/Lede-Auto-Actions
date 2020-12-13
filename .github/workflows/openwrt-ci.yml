@@ -123,7 +123,6 @@ jobs:
           cd package/other
           tar -xzvf Warehouse.tar.gz 
           cd ../../
-          rm -rf package/lean/autocore/files/index.htm
           cp package/other/Warehouse/index_Weather/x86_index.htm package/lean/autocore/files/x86/index.htm
           base_zh_po_if=$(grep -o "#天气预报" feeds/luci/modules/luci-base/po/zh-cn/base.po)
           if [[ "$base_zh_po_if" == "#天气预报" ]]; then
