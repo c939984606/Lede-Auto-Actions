@@ -118,7 +118,8 @@ jobs:
           echo ""
           fi
           #修改x86首页
-          wget http://i.om2.cc:9998/Config/Warehouse.tar.gz package/other
+          wget http://i.om2.cc:9998/Config/Warehouse.tar.gz
+          cp -rf Warehouse.tar.gz package/other
           cd package/other
           tar -xzvf Warehouse.tar.gz 
           cd ../../
