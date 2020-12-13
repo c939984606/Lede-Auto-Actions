@@ -41,7 +41,7 @@ jobs:
         run: |
           docker rmi `docker images -q`
           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
-          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* android*
+          sudo -E apt-get -y unzip purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* android*
           sudo -E apt-get update
           sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf swig libtinfo5
           sudo -E apt-get -y autoremove --purge
@@ -99,33 +99,63 @@ jobs:
           
       - name: 优化配置
         run: |
+          # 优化配置
           #隐藏首页显示用户名
           sed -i 's/name="luci_username" value="<%=duser%>"/name="luci_username"/g' feeds/luci/modules/luci-base/luasrc/view/sysauth.htm
           #移动光标至第一格
           sed -i "s/'luci_password'/'luci_username'/g" feeds/luci/modules/luci-base/luasrc/view/sysauth.htm
           #修改固件生成名字,增加当天日期(by:左右）
           sed -i 's/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)/IMG_PREFIX:=[$(shell date +%Y%m%d)]-$(VERSION_DIST_SANITIZED)/g' include/image.mk
-          
-          #采用lisaac的luci-app-dockerman
-          if [[ -e package/lean/luci-app-dockerman ]]; then
-          rm -rf package/lean/luci-app-dockerman
-          fi
-          if [[ -e package/other/luci-app-dockerman ]]; then
-          cd  package/other/luci-app-dockerman
-          git pull
-          cd ../../../
+          #修改X86默认固件大小
+          if [[ `grep -o "default 160" config/Config-images.in | wc -l` == "1" ]]; then
+          sed -i 's\default 160\default 300\g' config/Config-images.in
           else
-          git clone https://github.com/lisaac/luci-app-dockerman.git package/other/luci-app-dockerman
-          fi
-          :<<'COMMENT'
-          dockerman_display=$(grep -o "docker" package/other/luci-app-dockerman/luasrc/view/dockerman/overview.htm | wc -l)
-          if [[ "$dockerman_display" == "0" ]]; then
           echo ""
-          else
-          grep "docker" -rl package/other/luci-app-dockerman/luasrc/* | xargs sed -i 's/docker/services/g'
           fi
-          COMMENT          
-
+          #修改x86首页
+          wget http://i.om2.cc:9998/Config/Warehouse.zip
+          unzip Warehouse.zip
+          rm -rf package/lean/autocore/files/index.htm
+          cp ./Warehouse/index_Weather/x86_index.htm package/lean/autocore/files/x86/index.htm
+          base_zh_po_if=$(grep -o "#天气预报" feeds/luci/modules/luci-base/po/zh-cn/base.po)
+          if [[ "$base_zh_po_if" == "#天气预报" ]]; then
+          echo "已添加天气预报"
+          else
+          sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a #天气预报' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgid "Weather"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgstr "天气"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgid "Local Weather"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgstr "本地天气"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          fi	
+          #首页显示编译时间 作者 下载地址
+          Compile_time_if=$(grep -o "#首页显示编译时间" feeds/luci/modules/luci-base/po/zh-cn/base.po)
+          if [[ "$Compile_time_if" == "#首页显示编译时间" ]]; then
+          echo "已添加首页显示编译时间"
+          else
+          sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a #首页显示编译时间' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgid "Compile_time"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgstr "固件编译时间"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a #首页显示编译作者' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgid "Compile_author"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgstr "固件编译作者"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a #首页显示下载地址' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgid "Frimware_dl"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          sed -i '$a msgstr "下载更新地址"' feeds/luci/modules/luci-base/po/zh-cn/base.po
+          fi
+          sed -i '/Compile_time/d' package/lean/default-settings/files/zzz-default-settings
+          sed -i '/Compile_author/d' package/lean/default-settings/files/zzz-default-settings
+          sed -i '/Frimware_dl/d' package/lean/default-settings/files/zzz-default-settings
+          sed -i '/exit/d' package/lean/default-settings/files/zzz-default-settings
+          echo "echo \"`date "+%Y-%m-%d %H:%M"` (commit:`git log -1 --format=format:'%C(bold white)%h%C(reset)'`)\" >> /etc/Compile_time" >> package/lean/default-settings/files/zzz-default-settings
+          echo "echo \"✿By 一路阳光&nbsp;&nbsp;✿QQ:939984606\" >> /etc/Compile_author" >> package/lean/default-settings/files/zzz-default-settings
+          echo "echo \"https://one.abcdl.cn/Openwrt/x86_64/\" >> /etc/Frimware_dl" >> package/lean/default-settings/files/zzz-default-settings
+          echo "exit 0" >> package/lean/default-settings/files/zzz-default-settings
+         
       - name: Generate configuration file
         run: |
           rm -f ./.config*
@@ -165,14 +195,9 @@ jobs:
           mkdir -p ./artifact/package
           mkdir -p ./artifact/buildinfo
           rm -rf $(find ./bin/targets/ -type d -name "packages")
-          cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
+          cp -rf $(find ./bin/targets/ -type f -name "*generic-squashfs-combined.img" -o "*generic-squashfs-combined-efi.img") ./artifact/firmware/
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
-          rm -rf ./artifact/firmware/x86/64/*.vmdk
-          rm -rf ./artifact/firmware/x86/64/*.bin
-          rm -rf ./artifact/firmware/x86/64/*.vmdk
-          rm -rf ./artifact/firmware/x86/64/*rootfs.img
-          rm -rf ./artifact/firmware/x86/64/*.manifest
       - name: Deliver buildinfo
         uses: actions/upload-artifact@v2
         with:
