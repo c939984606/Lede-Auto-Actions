@@ -118,17 +118,7 @@ jobs:
           echo ""
           fi
           #修改x86首页
-          #wget http://i.om2.cc:9998/Config/Warehouse.tar.gz
-          #cp -rf Warehouse.tar.gz package/other
-          #cd package/other
-          #tar -xzvf Warehouse.tar.gz 
-          #cd ../../
-          #cp package/other/Warehouse/index_Weather/x86_index.htm package/lean/autocore/files/x86/index.htm
           echo "-----------------------"
-          base_zh_po_if=$(grep -o "#天气预报" feeds/luci/modules/luci-base/po/zh-cn/base.po)
-          if [[ "$base_zh_po_if" == "#天气预报" ]]; then
-          echo "已添加天气预报"
-          else
           sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a #天气预报' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a msgid "Weather"' feeds/luci/modules/luci-base/po/zh-cn/base.po
@@ -136,12 +126,6 @@ jobs:
           sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a msgid "Local Weather"' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a msgstr "本地天气"' feeds/luci/modules/luci-base/po/zh-cn/base.po
-          fi	
-          #首页显示编译时间 作者 下载地址
-          Compile_time_if=$(grep -o "#首页显示编译时间" feeds/luci/modules/luci-base/po/zh-cn/base.po)
-          if [[ "$Compile_time_if" == "#首页显示编译时间" ]]; then
-          echo "已添加首页显示编译时间"
-          else
           sed -i '$a \       ' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a #首页显示编译时间' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a msgid "Compile_time"' feeds/luci/modules/luci-base/po/zh-cn/base.po
@@ -154,7 +138,6 @@ jobs:
           sed -i '$a #首页显示下载地址' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a msgid "Frimware_dl"' feeds/luci/modules/luci-base/po/zh-cn/base.po
           sed -i '$a msgstr "下载更新地址"' feeds/luci/modules/luci-base/po/zh-cn/base.po
-          fi
           sed -i '/Compile_time/d' package/lean/default-settings/files/zzz-default-settings
           sed -i '/Compile_author/d' package/lean/default-settings/files/zzz-default-settings
           sed -i '/Frimware_dl/d' package/lean/default-settings/files/zzz-default-settings
