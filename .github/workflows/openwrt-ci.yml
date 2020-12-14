@@ -146,6 +146,7 @@ jobs:
           echo "echo \"✿By 一路阳光&nbsp;&nbsp;✿QQ:939984606\" >> /etc/Compile_author" >> package/lean/default-settings/files/zzz-default-settings
           echo "echo \"https://one.abcdl.cn/Openwrt/x86_64/\" >> /etc/Frimware_dl" >> package/lean/default-settings/files/zzz-default-settings
           echo "exit 0" >> package/lean/default-settings/files/zzz-default-settings
+          cat package/lean/default-settings/files/zzz-default-settings
          
       - name: Generate configuration file
         run: |
@@ -189,9 +190,7 @@ jobs:
           cp -rf $(find ./bin/targets/ -type f) ./artifact/firmware/
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
-          rm -rf ./artifact/package/x86/64/*.vmdk
-          rm -rf ./artifact/package/x86/64/*.bin
-          rm -rf ./artifact/package/x86/64/*rootfs.img
+          
       - name: Deliver buildinfo
         uses: actions/upload-artifact@v2
         with:
