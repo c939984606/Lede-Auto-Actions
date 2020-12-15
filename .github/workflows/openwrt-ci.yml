@@ -151,7 +151,7 @@ jobs:
       - name: Generate configuration file
         run: |
           rm -f ./.config*
-          wget http://i.om2.cc:9998/Config/lede
+          wget http://i.om2.cc:9998/Openwrt/My_config/lede
           mv lede .config
           #
           # 在 cat >> .config <<EOF 到 EOF 之间粘贴你的编译配置, 需注意缩进关系
