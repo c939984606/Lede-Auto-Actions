@@ -43,59 +43,56 @@ jobs:
           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
           sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* android*
           sudo -E apt-get update
-          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf swig libtinfo5
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf swig
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
-          # sudo mkdir -p -m 777 /mnt/openwrt/bin /mnt/openwrt/build_dir/host /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/dl /mnt/openwrt/feeds /mnt/openwrt/staging_dir
-          # ln -s /mnt/openwrt/bin ./bin
-          # mkdir -p ./build_dir
-          # ln -s -f /mnt/openwrt/build_dir/host ./build_dir/host
-          # ln -s -f /mnt/openwrt/build_dir/hostpkg ./build_dir/hostpkg
-          # ln -s /mnt/openwrt/dl ./dl
-          # ln -s /mnt/openwrt/feeds ./feeds
-          # ln -s /mnt/openwrt/staging_dir ./staging_dir
           df -h
       - name: 添加插件
         run: |
           mkdir package/other
-          #添加 fw876/helloworld
-          sed -i "s/#src-git helloworld/src-git helloworld/g" feeds.conf.default
-          git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/other/luci-app-adguardhome
-          #clash
-          git clone https://github.com/frainzy1477/luci-app-clash.git package/other/luci-app-clash
-          #京东签到
-          git clone https://github.com/jerrykuku/luci-app-jd-dailybonus.git package/other/luci-app-jd-dailybonus
-          #微信推送
-          git clone https://github.com/tty228/luci-app-serverchan.git package/other/luci-app-serverchan
-          #vssr
-          git clone https://github.com/jerrykuku/lua-maxminddb.git package/other/lua-maxminddb 
-          git clone https://github.com/jerrykuku/luci-app-vssr.git package/other/luci-app-vssr
+          #微信推送钉钉机器人版
+          git clone https://github.com/zzsj0928/luci-app-pushbot ./package/other/luci-app-pushbot
+
           #主题
-          rm -rf ./package/lean/luci-theme-argon  
+          rm -rf ./package/lean/luci-theme-argon
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git ./package/lean/luci-theme-argon
-          #smart dns
-          WORKINGDIR="`pwd`/feeds/packages/net/smartdns"
-          mkdir $WORKINGDIR -p
-          rm $WORKINGDIR/* -fr
-          wget https://github.com/pymumu/openwrt-smartdns/archive/master.zip -O $WORKINGDIR/master.zip
-          unzip $WORKINGDIR/master.zip -d $WORKINGDIR
-          mv $WORKINGDIR/openwrt-smartdns-master/* $WORKINGDIR/
-          rmdir $WORKINGDIR/openwrt-smartdns-master
-          rm $WORKINGDIR/master.zip
-          LUCIBRANCH="lede" 
-          WORKINGDIR="`pwd`/feeds/luci/applications/luci-app-smartdns"
-          mkdir $WORKINGDIR -p
-          rm $WORKINGDIR/* -fr
-          wget https://github.com/pymumu/luci-app-smartdns/archive/${LUCIBRANCH}.zip -O $WORKINGDIR/${LUCIBRANCH}.zip
-          unzip $WORKINGDIR/${LUCIBRANCH}.zip -d $WORKINGDIR
-          mv $WORKINGDIR/luci-app-smartdns-${LUCIBRANCH}/* $WORKINGDIR/
-          rmdir $WORKINGDIR/luci-app-smartdns-${LUCIBRANCH}
-          rm $WORKINGDIR/${LUCIBRANCH}.zip
-          #采用lisaac的luci-app-dockerman
-          if [[ -e package/lean/luci-app-dockerman ]]; then
-          rm -rf package/lean/luci-app-dockerman
-          fi
-          git clone https://github.com/lisaac/luci-app-dockerman.git package/other/luci-app-dockerman
+
+          # 采用lisaac的luci-app-dockerman
+          rm -rf ./package/lean/luci-app-dockerman 
+          rm -rf ./package/lean/luci-lib-docker
+          svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman ./package/lean/luci-app-dockerman
+          git clone --depth=1 https://github.com/lisaac/luci-lib-docker ./package/lean/luci-lib-docker
+          #  VSSR
+          #rm -rf ./package/lean/luci-app-vssr
+          #rm -rf ./package/lean/lua-maxminddb
+          #git clone https://github.com/jerrykuku/luci-app-vssr.git ./package/lean/luci-app-vssr
+          #git clone https://github.com/jerrykuku/lua-maxminddb.git ./package/lean/lua-maxminddb
+          #添加 fw876/helloworld
+          rm -rf ./package/lean/helloworld
+          git clone https://github.com/fw876/helloworld.git ./package/lean/helloworld
+          # add passwall dependence
+          #git clone https://github.com/kenzok8/small ./package/other/small
+          #svn co https://github.com/xiaorouji/openwrt-passwall/trunk/luci-app-passwall ./package/other/luci-app-passwall
+          # add openclash
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-openclash ./package/other/luci-app-openclash
+          # add luci-app-advanced
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-advanced ./package/other/luci-app-advanced
+          # add luci-app-serverchan
+          rm -rf ./package/lean/luci-app-serverchan
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-serverchan ./package/lean/luci-app-serverchan
+          # add luci-app-aliddns
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-aliddns ./package/other/luci-app-aliddns
+          # add luci-app-eqos
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-eqos ./package/other/luci-app-eqos
+          # add theme
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-atmaterial ./package/other/luci-theme-atmaterial
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-edge ./package/other/luci-theme-edge
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-ifit ./package/other/luci-theme-ifit
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-opentomato ./package/other/luci-theme-opentomato
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-opentomcat ./package/other/luci-theme-opentomcat
+          svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-theme-opentopd ./package/other/luci-theme-opentopd
+          # add luci-app-jd-dailybonus
+          git clone https://github.com/jerrykuku/luci-app-jd-dailybonus.git ./package/other/luci-app-jd-dailybonus
     
       - name: Update feeds
         run: |
@@ -144,7 +141,7 @@ jobs:
           sed -i '/exit/d' package/lean/default-settings/files/zzz-default-settings
           echo "echo \"`date "+%Y-%m-%d %H:%M"` (commit:`git log -1 --format=format:'%C(bold white)%h%C(reset)'`)\" >> /etc/Compile_time" >> package/lean/default-settings/files/zzz-default-settings
           echo "echo \"✿By 一路阳光&nbsp;&nbsp;✿QQ:939984606\" >> /etc/Compile_author" >> package/lean/default-settings/files/zzz-default-settings
-          echo "echo \"https://one.abcdl.cn/Openwrt/x86_64/\" >> /etc/Frimware_dl" >> package/lean/default-settings/files/zzz-default-settings
+          echo "echo \"点击此处下载&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✿提取码：nbn9\" >> /etc/Frimware_dl" >> package/lean/default-settings/files/zzz-default-settings
           echo "exit 0" >> package/lean/default-settings/files/zzz-default-settings
           cat package/lean/default-settings/files/zzz-default-settings
          
@@ -152,8 +149,8 @@ jobs:
         run: |
           rm -f ./.config
           # 下载自定义配置
-          wget https://files.abcdl.cn/GitHub/OpenWrt_Config/lede
-          mv lede .config
+          wget -O .config https://z.abcdl.cn/directlink/3/Share/OpenWrt/.config
+          #mv lede .config
           #
           # 在 cat >> .config <<EOF 到 EOF 之间粘贴你的编译配置, 需注意缩进关系
           # 例如:
