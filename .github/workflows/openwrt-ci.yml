@@ -65,14 +65,14 @@ jobs:
           #  VSSR
           #rm -rf ./package/lean/luci-app-vssr
           #rm -rf ./package/lean/lua-maxminddb
-          #git clone https://github.com/jerrykuku/luci-app-vssr.git ./package/lean/luci-app-vssr
-          #git clone https://github.com/jerrykuku/lua-maxminddb.git ./package/lean/lua-maxminddb
+          git clone https://github.com/jerrykuku/luci-app-vssr.git ./package/lean/luci-app-vssr
+          git clone https://github.com/jerrykuku/lua-maxminddb.git ./package/lean/lua-maxminddb
           #添加 fw876/helloworld
           rm -rf ./package/lean/helloworld
           git clone https://github.com/fw876/helloworld.git ./package/lean/helloworld
           # add passwall dependence
-          #git clone https://github.com/kenzok8/small ./package/other/small
-          #svn co https://github.com/xiaorouji/openwrt-passwall/trunk/luci-app-passwall ./package/other/luci-app-passwall
+          git clone https://github.com/kenzok8/small ./package/other/small
+          svn co https://github.com/xiaorouji/openwrt-passwall/trunk/luci-app-passwall ./package/other/luci-app-passwall
           # add openclash
           svn co https://github.com/kenzok8/openwrt-packages/trunk/luci-app-openclash ./package/other/luci-app-openclash
           # add luci-app-advanced
